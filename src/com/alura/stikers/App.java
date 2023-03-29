@@ -1,6 +1,5 @@
 package com.alura.stikers;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -53,7 +52,7 @@ public class App {
                             inputStream = new URL(urlImagem).openStream();
                             geradora.cria(inputStream, f.getTitulo() + ".png");
                         } catch (Exception ex) {
-                            throw new RuntimeException();
+                            throw new RuntimeException("Erro ao criar figurinhas");
                         }
 
                         System.out.println(f + "\n");

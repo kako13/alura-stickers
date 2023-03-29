@@ -2,6 +2,7 @@ package com.alura.stikers;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -27,13 +28,20 @@ public class GeradoraDeFigurinhas {
         Graphics2D graphics = (Graphics2D) novaImagem.getGraphics();
         graphics.drawImage(imagemOriginal, 0, 0, null);
 
+
         //configurar fonte
         Font fonte = new Font(Font.SANS_SERIF, Font.BOLD, 80);
         graphics.setFont(fonte);
         graphics.setColor(Color.CYAN);
 
         //Escrever uma frase na nova imagem
-        graphics.drawString("E tome figurinha", 100, novaAltura - 100);
+        String texto = "E tome figurinha";
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        Rectangle2D retanguloTexto = fontMetrics.getStringBounds(texto, graphics);
+        int larguraTexto = (int) retanguloTexto.getWidth();
+
+        int posicaoTextoX = (largura - larguraTexto) / 2;
+        graphics.drawString(texto, posicaoTextoX, novaAltura - 100);
 
         //Escrever imagem nova em um arquivo
         File diretorio = new File("saida\\");
