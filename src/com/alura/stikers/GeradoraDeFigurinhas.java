@@ -2,6 +2,9 @@ package com.alura.stikers;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,18 +33,34 @@ public class GeradoraDeFigurinhas {
 
 
         //configurar fonte
-        Font fonte = new Font(Font.SANS_SERIF, Font.BOLD, 80);
+        Font fonte = new Font("Impact", Font.BOLD, 84);
         graphics.setFont(fonte);
-        graphics.setColor(Color.CYAN);
+        graphics.setColor(Color.YELLOW);
 
         //Escrever uma frase na nova imagem
-        String texto = "E tome figurinha";
+        String texto = "E TOME FIGURINHA";
         FontMetrics fontMetrics = graphics.getFontMetrics();
         Rectangle2D retanguloTexto = fontMetrics.getStringBounds(texto, graphics);
-        int larguraTexto = (int) retanguloTexto.getWidth();
 
+        int larguraTexto = (int) retanguloTexto.getWidth();
         int posicaoTextoX = (largura - larguraTexto) / 2;
-        graphics.drawString(texto, posicaoTextoX, novaAltura - 100);
+        int posicaoTextoY = novaAltura - 100;
+
+        graphics.drawString(texto, posicaoTextoX, posicaoTextoY);
+
+        //Adicionar contorno (outline) nos caracteres
+        FontRenderContext fontRenderContext = graphics.getFontRenderContext();
+        TextLayout textLayout = new TextLayout(texto, fonte, fontRenderContext);
+        Shape outline = textLayout.getOutline(null);
+        AffineTransform transform = graphics.getTransform();
+        transform.translate(posicaoTextoX, posicaoTextoY);
+        graphics.setTransform(transform);
+
+        BasicStroke outlineStroke = new BasicStroke(largura * 0.004f);
+        graphics.setStroke(outlineStroke);
+        graphics.setColor(Color.black);
+        graphics.draw(outline);
+        graphics.setClip(outline);
 
         //Escrever imagem nova em um arquivo
         File diretorio = new File("saida\\");
