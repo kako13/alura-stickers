@@ -10,7 +10,7 @@ public class Filme {
 
 
     public Filme(String titulo, String tituloCompleto, String image, String imDbRating) {
-        this.titulo=titulo;
+        this.titulo=titulo.replace(":", "-");
         this.tituloCompleto=tituloCompleto;
         this.image=image;
         this.imDbRating=imDbRating;
@@ -36,7 +36,7 @@ public class Filme {
     public String toString() {
         return "Título: \u001b[1m" + tituloCompleto + ",\n" +
                 "\u001b[mImagem: \u001b[1m" + image + ",\n" +
-                "\u001b[38;2;255;255;255m \u001b[48;2;42;122;228m Classificação: \u001b[1m" + imDbRating + "\u001b[m\n" +
+                "\u001b[38;2;255;255;255m\u001b[48;2;42;122;228mClassificação: \u001b[1m" + imDbRating + "\u001b[m\n" +
                 getStars();
     }
 

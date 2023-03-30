@@ -50,7 +50,7 @@ public class App {
                         InputStream inputStream = null;
                         try {
                             inputStream = new URL(urlImagem).openStream();
-                            geradora.cria(inputStream, f.getTitulo() + ".png");
+                            geradora.cria(inputStream, f.getTitulo() + ".png", AvaliacaoEnum.getByRating(f.getImDbRating()));
                         } catch (Exception ex) {
                             throw new RuntimeException("Erro ao criar figurinhas");
                         }
