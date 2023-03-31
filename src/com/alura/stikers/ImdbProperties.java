@@ -6,14 +6,14 @@ import java.util.*;
 
 public class ImdbProperties {
 
-    public static HashMap<String, String> carregarEndPoints() {
+    public static HashMap<String, Fonte> carregarEndPoints() {
 
-        ResourceBundle bundle = ResourceBundle.getBundle("imdb");
+        ResourceBundle bundle = ResourceBundle.getBundle("apis");
 
         //Metodo getkeys nao retorna ordenado
         Enumeration<String> keys = bundle.getKeys();
 
-        HashMap<String, String> mapChaveURI = new LinkedHashMap<>();
+        HashMap<String, Fonte> mapChaveURI = new LinkedHashMap<>();
 
         while (keys.hasMoreElements()) {
             String nextElement = keys.nextElement();
@@ -21,7 +21,7 @@ public class ImdbProperties {
 
             List<String> valueList = Arrays.stream(propertyValue.split(", ")).toList();
 
-            mapChaveURI.put(valueList.get(0), valueList.get(1));
+            mapChaveURI.put(valueList.get(0), new Fonte(valueList.get(1), valueList.get(2)));
         }
 
         return mapChaveURI;
