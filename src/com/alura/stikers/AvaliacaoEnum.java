@@ -4,8 +4,8 @@ public enum AvaliacaoEnum {
 
     BRABO("BRABO", "sobreposicao\\brabo.png"), MEH("MEH", "sobreposicao\\meh.png");
 
-    private String texto;
-    private String imagem;
+    private final String texto;
+    private final String imagem;
 
     AvaliacaoEnum(String texto, String imagem) {
         this.texto = texto;
@@ -21,12 +21,11 @@ public enum AvaliacaoEnum {
     }
 
     public static AvaliacaoEnum getByRating(String rating) {
-        int round = Math.round(Float.valueOf(rating));
+        int round = Math.round(Float.parseFloat(rating));
 
         if (round >= 9)
             return BRABO;
         else
             return MEH;
     }
-
 }
