@@ -1,19 +1,15 @@
 package com.alura.stikers;
 
-public class Conteudo {
+public record Conteudo(String titulo, String urlImagem) implements InsumoFigurinha {
 
-    private final String urlImagem;
-    private final String titulo;
 
-    public Conteudo(String titulo, String urlImagem) {
-        this.titulo=titulo.replace(":", "-");
-        this.urlImagem = urlImagem;
-    }
 
+    @Override
     public String getUrlImagem() {
         return urlImagem;
     }
 
+    @Override
     public String getTitulo() {
         return titulo;
     }

@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface ExtratorDeConteudo {
 
-    List<Conteudo> extraiConteudos(String json);
+    List<InsumoFigurinha> extraiConteudos(String json);
 }

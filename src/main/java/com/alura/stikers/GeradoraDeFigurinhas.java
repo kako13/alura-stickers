@@ -38,7 +38,7 @@ public class GeradoraDeFigurinhas {
         graphics.setColor(Color.YELLOW);
 
         //Adicionar imagem de selo
-        InputStream imagemSelo = new FileInputStream(new File(avaliacaoEnum.getImagem()));
+        InputStream imagemSelo = new FileInputStream(avaliacaoEnum.getImagem());
         BufferedImage imagemSobreposicao = ImageIO.read(imagemSelo);
         int posicaoSeloTextoY = novaAltura - 400;
 

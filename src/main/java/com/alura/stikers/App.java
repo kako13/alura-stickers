@@ -29,24 +29,24 @@ public class App {
                 throw new RuntimeException("Erro ao instanciar Extrator");
             }
 
-            List<Conteudo> conteudos = extrator.extraiConteudos(json);
+            List<InsumoFigurinha> insumoFigurinhas = extrator.extraiConteudos(json);
 
             var geradora = new GeradoraDeFigurinhas();
 
             //exibir e manipular os dados/Gerar figurinhas
-            conteudos.forEach(conteudo -> {
-                        String urlImagem = conteudo.getUrlImagem();
+            insumoFigurinhas.forEach(insumoFigurinha -> {
+                        String urlImagem = insumoFigurinha.getUrlImagem();
 
                         InputStream inputStream;
                         try {
                             inputStream = new URL(urlImagem).openStream();
 
-                            geradora.cria(inputStream, conteudo.getTitulo() + ".png", AvaliacaoEnum.BRABO);
+                            geradora.cria(inputStream, insumoFigurinha.getTitulo() + ".png", AvaliacaoEnum.BRABO);
                         } catch (Exception ex) {
                             throw new RuntimeException("Erro ao criar figurinhas");
                         }
 
-                        System.out.println(conteudo + "\n");
+                        System.out.println(insumoFigurinha + "\n");
                     });
             System.out.println("\n");
         });
