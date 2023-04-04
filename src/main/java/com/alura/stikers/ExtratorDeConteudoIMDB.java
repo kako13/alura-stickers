@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class ExtratorDeConteudoIMDB implements ExtratorDeConteudo {
 
     @Override
-    public List<Conteudo> extraiConteudos(String json) {
+    public List<InsumoFigurinha> extraiConteudos(String json) {
         List<Map<String, String>> listaDeAtributos = JsonParser.parser(json);
 
         return listaDeAtributos.stream()
