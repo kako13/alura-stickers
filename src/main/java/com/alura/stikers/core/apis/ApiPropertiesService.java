@@ -1,19 +1,19 @@
-package com.alura.stikers;
+package com.alura.stikers.core.apis;
 
 
 import java.util.*;
 
 
-public class ImdbProperties {
+public class ApiPropertiesService {
 
-    public static HashMap<String, Fonte> carregarEndPoints() {
+    public static List<ApiExterna> getExternalAPIs() {
 
         ResourceBundle bundle = ResourceBundle.getBundle("apis");
 
         //Metodo getkeys nao retorna ordenado
         Enumeration<String> keys = bundle.getKeys();
 
-        HashMap<String, Fonte> mapChaveURI = new LinkedHashMap<>();
+        List<ApiExterna> list = new ArrayList<>();
 
         while (keys.hasMoreElements()) {
             String nextElement = keys.nextElement();
@@ -21,9 +21,9 @@ public class ImdbProperties {
 
             List<String> valueList = Arrays.stream(propertyValue.split(", ")).toList();
 
-            mapChaveURI.put(valueList.get(0), new Fonte(valueList.get(1), valueList.get(2)));
+            list.add(new ApiExterna(valueList.get(0), valueList.get(1), valueList.get(2)));
         }
 
-        return mapChaveURI;
+        return list;
     }
 }

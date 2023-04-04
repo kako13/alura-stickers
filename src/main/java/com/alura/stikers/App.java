@@ -1,54 +1,70 @@
 package com.alura.stikers;
 
+import com.alura.stikers.core.apis.ApiExterna;
+import com.alura.stikers.core.apis.ApiPropertiesService;
+import com.alura.stikers.core.apis.models.ConteudoIMDB;
+import com.alura.stikers.domain.GeradoraDeSticker;
+import com.alura.stikers.domain.enums.AvaliacaoEnum;
+import com.alura.stikers.domain.exceptions.InstanceDataExtractorExcetion;
+import com.alura.stikers.domain.extrator.ExtratorDeConteudo;
+import com.alura.stikers.domain.model.DadosObrigatorios;
+import com.alura.stikers.infra.http.ClienteHttp;
+import com.alura.stikers.infra.io.StreamReader;
+
 import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 
 public class App {
     public static void main(String[] args) {
 
-        HashMap<String, Fonte> mapNomeRelatorioComURI = ImdbProperties.carregarEndPoints();
+        List<ApiExterna> apiExternas = ApiPropertiesService.getExternalAPIs();
+        var geradora = new GeradoraDeSticker();
 
-        mapNomeRelatorioComURI.entrySet().forEach(e -> {
+        apiExternas.stream()
+                //exibir
+                .map(App::imprimeCabecalho)
 
-            System.out.println();
-            System.out.println("\u001b[1mChamando " + e.getKey());
-            System.out.println("Endpoint: \u001b[m " + e.getValue().getUrlApi());
-            System.out.println();
+                //extrair apenas os dados que interessam a cada abstração
+                .map(apiExterna -> {
+                    ExtratorDeConteudo extrator = pegaInstanciaExtrator(apiExterna);
+                    String json = new ClienteHttp().realizaGet(apiExterna.urlApi());
+                    return extrator.extraiDados(json);
+                })
+                .flatMap(Collection::stream)
 
-            // fazer uma conexão HTTP e buscar os rankings disponibilizados
-            String json = new ClienteHttp().buscaDados(e.getValue().getUrlApi());
+                //manipular os dados/Gerar figurinhas
+                .forEach(insumoFigurinha -> geraFigurinhaNoDiretorio(geradora, insumoFigurinha));
+    }
 
-            //extrair apenas os dados que interessam (título, titulo completo, imagem e classificação)
-            ExtratorDeConteudo extrator;
-            try {
-                Class<?> classe = Class.forName(e.getValue().getClasse());
-                extrator = (ExtratorDeConteudo) classe.getConstructor().newInstance();
-            } catch (Exception ex) {
-                throw new RuntimeException("Erro ao instanciar Extrator");
-            }
+    private static void geraFigurinhaNoDiretorio(GeradoraDeSticker geradora, DadosObrigatorios dadosObrigatorios) {
+        InputStream inputStream = StreamReader.recuperaImagemDaUrl(dadosObrigatorios);
+        geradora.cria(inputStream, dadosObrigatorios.titulo() + ".png", atribuiAvaliacao(dadosObrigatorios));
+        System.out.println(dadosObrigatorios + "\n");
+    }
 
-            List<InsumoFigurinha> insumoFigurinhas = extrator.extraiConteudos(json);
+    private static AvaliacaoEnum atribuiAvaliacao(DadosObrigatorios dadosObrigatorios) {
+        if (dadosObrigatorios instanceof ConteudoIMDB conteudoIMDB) {
+            return AvaliacaoEnum.getByRating(conteudoIMDB.imDbRating());
+        } else
+            return AvaliacaoEnum.BRABO;
+    }
 
-            var geradora = new GeradoraDeFigurinhas();
+    private static ExtratorDeConteudo pegaInstanciaExtrator(ApiExterna e) {
+        Class<?> classe;
+        try {
+            classe = Class.forName(e.classeExtrator());
+            return (ExtratorDeConteudo) classe.getConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
+            throw new InstanceDataExtractorExcetion("Erro ao instanciar extrator de dados");
+        }
+    }
 
-            //exibir e manipular os dados/Gerar figurinhas
-            insumoFigurinhas.forEach(insumoFigurinha -> {
-                        String urlImagem = insumoFigurinha.getUrlImagem();
-
-                        InputStream inputStream;
-                        try {
-                            inputStream = new URL(urlImagem).openStream();
-
-                            geradora.cria(inputStream, insumoFigurinha.getTitulo() + ".png", AvaliacaoEnum.BRABO);
-                        } catch (Exception ex) {
-                            throw new RuntimeException("Erro ao criar figurinhas");
-                        }
-
-                        System.out.println(insumoFigurinha + "\n");
-                    });
-            System.out.println("\n");
-        });
+    private static ApiExterna imprimeCabecalho(ApiExterna apiExterna) {
+        System.out.println();
+        System.out.println("\u001b[1mChamando " + apiExterna.Nome());
+        System.out.println("Endpoint: \u001b[m " + apiExterna.urlApi());
+        System.out.println();
+        return apiExterna;
     }
 }

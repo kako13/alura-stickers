@@ -1,23 +1,23 @@
-package com.alura.stikers;
+package com.alura.stikers.domain.enums;
 
 public enum AvaliacaoEnum {
 
     BRABO("BRABO", "sobreposicao\\brabo.png"), MEH("MEH", "sobreposicao\\meh.png");
 
     private final String texto;
-    private final String imagem;
+    private final String pathImagem;
 
-    AvaliacaoEnum(String texto, String imagem) {
+    AvaliacaoEnum(String texto, String pathImagem) {
         this.texto = texto;
-        this.imagem = imagem;
+        this.pathImagem = pathImagem;
     }
 
     public String getTexto() {
         return this.texto;
     }
 
-    public String getImagem() {
-        return this.imagem;
+    public String getPathImagem() {
+        return this.pathImagem;
     }
 
     public static AvaliacaoEnum getByRating(String rating) {

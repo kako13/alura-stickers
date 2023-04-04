@@ -1,4 +1,4 @@
-package com.alura.stikers;
+package com.alura.stikers.core.json;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 public class JsonParser {
 
-    private static final Pattern REGEX_ITENS = Pattern.compile(".*\\[(.+)\\].*");
+    private static final Pattern REGEX_ITENS = Pattern.compile(".*\\[(.+)].*");
     private static final Pattern REGEX_ATRIBUTOS_JSON = Pattern.compile("\"(.+?)\":\"(.*?)\"");
-    private static final Pattern REGEX_DELIMITADOR_ITENS = Pattern.compile("\\}.\\{");
+    private static final Pattern REGEX_DELIMITADOR_ITENS = Pattern.compile("}.\\{");
 
     public static List<Map<String, String>> parser(String json) {
 
