@@ -1,6 +1,6 @@
 package com.alura.stikers.domain.model;
 
-public interface DadosObrigatorios {
+public interface Conteudo {
     String urlImagem();
 
     String titulo();

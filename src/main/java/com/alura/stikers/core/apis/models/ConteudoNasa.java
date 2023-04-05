@@ -1,8 +1,8 @@
 package com.alura.stikers.core.apis.models;
 
-import com.alura.stikers.domain.model.DadosObrigatorios;
+import com.alura.stikers.domain.model.Conteudo;
 
-public record ConteudoNasa(String titulo, String urlImagem) implements DadosObrigatorios {
+public record ConteudoNasa(String titulo, String urlImagem) implements Conteudo {
 
     @Override
     public String toString() {

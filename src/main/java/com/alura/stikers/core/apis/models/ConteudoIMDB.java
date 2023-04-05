@@ -1,9 +1,9 @@
 package com.alura.stikers.core.apis.models;
 
-import com.alura.stikers.domain.model.DadosObrigatorios;
+import com.alura.stikers.domain.model.Conteudo;
 
 public record ConteudoIMDB(String titulo, String tituloCompleto, String urlImagem, String imDbRating)
-                                                                                            implements DadosObrigatorios {
+                                                                                            implements Conteudo {
 
     public ConteudoIMDB(String titulo, String tituloCompleto, String urlImagem, String imDbRating) {
         this.titulo = titulo.replace(":", "-").replace(" ", "_");
