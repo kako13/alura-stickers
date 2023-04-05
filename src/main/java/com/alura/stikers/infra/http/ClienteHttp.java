@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 
 public class ClienteHttp {
 
-    public String realizaGet(String url) {
+    public String realizaGet(String url) throws ExternalServiceAPIException {
 
         try {
             var client = HttpClient.newHttpClient();

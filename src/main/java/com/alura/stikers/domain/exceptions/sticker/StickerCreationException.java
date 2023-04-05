@@ -2,7 +2,7 @@ package com.alura.stikers.domain.exceptions.sticker;
 
 import java.io.Serial;
 
-public class StickerCreationException extends RuntimeException {
+public class StickerCreationException extends Exception {
     @Serial
     private static final long serialVersionUID = 1L;
 
