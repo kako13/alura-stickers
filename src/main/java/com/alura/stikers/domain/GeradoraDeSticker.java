@@ -1,7 +1,8 @@
 package com.alura.stikers.domain;
 
 import com.alura.stikers.domain.enums.AvaliacaoEnum;
-import com.alura.stikers.domain.exceptions.sticker.StickerApprovementImageReadException;
+import com.alura.stikers.domain.exceptions.sticker.StickerImageReadException;
+import com.alura.stikers.domain.exceptions.sticker.StickerImageWriteException;
 import com.alura.stikers.infra.io.StickerWriter;
 
 import javax.imageio.ImageIO;
@@ -11,12 +12,14 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class GeradoraDeSticker {
 
 
-    public void cria(InputStream inputStream, String nomeArquivo, AvaliacaoEnum avaliacaoEnum) {
+    public void cria(InputStream inputStream, String nomeArquivo, AvaliacaoEnum avaliacaoEnum) throws StickerImageReadException, StickerImageWriteException {
 
         //Leitura do stream da imagem
         BufferedImage imagemOriginal;
@@ -37,14 +40,13 @@ public class GeradoraDeSticker {
         Graphics2D graphics = (Graphics2D) novaImagem.getGraphics();
         graphics.drawImage(imagemOriginal, 0, 0, largura, altura, null);
 
+        //Adicionar imagem de selo
+        adicionaSeloDeAprovacao(avaliacaoEnum, largura, altura, novaAltura, graphics);
 
         //configurar fonte
         Font fonteTexto = new Font("Impact", Font.BOLD, 115);
         graphics.setFont(fonteTexto);
         graphics.setColor(Color.YELLOW);
-
-        //Adicionar imagem de selo
-        adicionaSeloDeAprovacao(avaliacaoEnum, largura, altura, novaAltura, graphics);
 
         //Escrever uma frase centralizada na nova imagem
         FontMetrics fontMetrics = graphics.getFontMetrics();
@@ -62,13 +64,13 @@ public class GeradoraDeSticker {
     }
 
     private static void adicionaSeloDeAprovacao(AvaliacaoEnum avaliacaoEnum, int largura, int altura,
-                                                int novaAltura, Graphics2D graphics) {
+                                                int novaAltura, Graphics2D graphics) throws StickerImageReadException {
         BufferedImage imagemSobreposicao;
         try {
             InputStream imagemSelo = new FileInputStream(avaliacaoEnum.getPathImagem());
             imagemSobreposicao = ImageIO.read(imagemSelo);
         } catch (IOException e) {
-            throw new StickerApprovementImageReadException(
+            throw new StickerImageReadException(
                     String.format("Erro ao ler a imagem do 'selo de aprovação' da figurinha do diretório '%s'",
                             avaliacaoEnum.getPathImagem()));
         }

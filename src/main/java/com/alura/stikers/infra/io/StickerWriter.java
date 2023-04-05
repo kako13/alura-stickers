@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class StickerWriter {
 
-    public static void escreverNovaImagem(String nomeArquivo, BufferedImage novaImagem) {
+    public static void escreverNovaImagem(String nomeArquivo, BufferedImage novaImagem) throws StickerImageWriteException {
         File diretorio = new File("saida\\");
         diretorio.mkdir();
         File figurinha = new File(diretorio + "/" + nomeArquivo);

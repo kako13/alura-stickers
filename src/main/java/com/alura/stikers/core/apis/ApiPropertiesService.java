@@ -24,6 +24,9 @@ public class ApiPropertiesService {
             list.add(new ApiExterna(valueList.get(0), valueList.get(1), valueList.get(2)));
         }
 
+        if (list.isEmpty())
+            System.out.println("\n\u001b[38;2;255;251;11m\u001b[48;2;245;64;25mArquivo de propriedade 'apis.properties' vazio\u001b[m");
+
         return list;
     }
 }

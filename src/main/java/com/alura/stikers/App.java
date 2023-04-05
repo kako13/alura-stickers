@@ -5,7 +5,12 @@ import com.alura.stikers.core.apis.ApiPropertiesService;
 import com.alura.stikers.core.apis.models.ConteudoIMDB;
 import com.alura.stikers.domain.GeradoraDeSticker;
 import com.alura.stikers.domain.enums.AvaliacaoEnum;
-import com.alura.stikers.domain.exceptions.InstanceDataExtractorExcetion;
+import com.alura.stikers.domain.exceptions.ExternalServiceAPIException;
+import com.alura.stikers.domain.exceptions.ExtractorNotFoundExcetion;
+import com.alura.stikers.domain.exceptions.GetImageFromUrlException;
+import com.alura.stikers.domain.exceptions.sticker.StickerCreationException;
+import com.alura.stikers.domain.exceptions.sticker.StickerImageReadException;
+import com.alura.stikers.domain.exceptions.sticker.StickerImageWriteException;
 import com.alura.stikers.domain.extrator.ExtratorDeConteudo;
 import com.alura.stikers.domain.model.DadosObrigatorios;
 import com.alura.stikers.infra.http.ClienteHttp;
@@ -27,17 +32,38 @@ public class App {
 
                 //extrair apenas os dados que interessam a cada abstração
                 .map(apiExterna -> {
-                    ExtratorDeConteudo extrator = pegaInstanciaExtrator(apiExterna);
-                    String json = new ClienteHttp().realizaGet(apiExterna.urlApi());
+                    ExtratorDeConteudo extrator = null;
+                    try {
+                        extrator = pegaInstanciaExtrator(apiExterna);
+                    } catch (ExtractorNotFoundExcetion e) {
+                        System.out.println(e.getMessage());
+                        System.exit(0);
+                    }
+
+                    String json = null;
+                    try {
+                        json = new ClienteHttp().realizaGet(apiExterna.urlApi());
+                    } catch (ExternalServiceAPIException e) {
+                        System.out.println(e.getMessage());
+                        System.exit(0);
+                    }
+
                     return extrator.extraiDados(json);
                 })
                 .flatMap(Collection::stream)
 
                 //manipular os dados/Gerar figurinhas
-                .forEach(insumoFigurinha -> geraFigurinhaNoDiretorio(geradora, insumoFigurinha));
+                .forEach(insumoFigurinha -> {
+                    try {
+                        geraFigurinhaNoDiretorio(geradora, insumoFigurinha);
+                    } catch (StickerCreationException | GetImageFromUrlException e) {
+                        System.out.println(e.getMessage());
+                        System.exit(0);
+                    }
+                });
     }
 
-    private static void geraFigurinhaNoDiretorio(GeradoraDeSticker geradora, DadosObrigatorios dadosObrigatorios) {
+    private static void geraFigurinhaNoDiretorio(GeradoraDeSticker geradora, DadosObrigatorios dadosObrigatorios) throws StickerImageReadException, GetImageFromUrlException, StickerImageWriteException {
         InputStream inputStream = StreamReader.recuperaImagemDaUrl(dadosObrigatorios);
         geradora.cria(inputStream, dadosObrigatorios.titulo() + ".png", atribuiAvaliacao(dadosObrigatorios));
         System.out.println(dadosObrigatorios + "\n");
@@ -50,19 +76,20 @@ public class App {
             return AvaliacaoEnum.BRABO;
     }
 
-    private static ExtratorDeConteudo pegaInstanciaExtrator(ApiExterna e) {
+    private static ExtratorDeConteudo pegaInstanciaExtrator(ApiExterna e) throws ExtractorNotFoundExcetion {
         Class<?> classe;
         try {
             classe = Class.forName(e.classeExtrator());
             return (ExtratorDeConteudo) classe.getConstructor().newInstance();
         } catch (ReflectiveOperationException ex) {
-            throw new InstanceDataExtractorExcetion("Erro ao instanciar extrator de dados");
+            throw new ExtractorNotFoundExcetion("Extrator de conteudo da API " + e.nome() + " não encontrado " +
+                    "no arquivo de propriedades");
         }
     }
 
     private static ApiExterna imprimeCabecalho(ApiExterna apiExterna) {
         System.out.println();
-        System.out.println("\u001b[1mChamando " + apiExterna.Nome());
+        System.out.println("\u001b[1mChamando " + apiExterna.nome());
         System.out.println("Endpoint: \u001b[m " + apiExterna.urlApi());
         System.out.println();
         return apiExterna;
