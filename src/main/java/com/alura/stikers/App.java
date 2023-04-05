@@ -12,7 +12,7 @@ import com.alura.stikers.domain.exceptions.sticker.StickerCreationException;
 import com.alura.stikers.domain.exceptions.sticker.StickerImageReadException;
 import com.alura.stikers.domain.exceptions.sticker.StickerImageWriteException;
 import com.alura.stikers.domain.extrator.ExtratorDeConteudo;
-import com.alura.stikers.domain.model.DadosObrigatorios;
+import com.alura.stikers.domain.model.Conteudo;
 import com.alura.stikers.infra.http.ClienteHttp;
 import com.alura.stikers.infra.io.StreamReader;
 
@@ -63,14 +63,14 @@ public class App {
                 });
     }
 
-    private static void geraFigurinhaNoDiretorio(GeradoraDeSticker geradora, DadosObrigatorios dadosObrigatorios) throws StickerImageReadException, GetImageFromUrlException, StickerImageWriteException {
-        InputStream inputStream = StreamReader.recuperaImagemDaUrl(dadosObrigatorios);
-        geradora.cria(inputStream, dadosObrigatorios.titulo() + ".png", atribuiAvaliacao(dadosObrigatorios));
-        System.out.println(dadosObrigatorios + "\n");
+    private static void geraFigurinhaNoDiretorio(GeradoraDeSticker geradora, Conteudo conteudo) throws StickerImageReadException, GetImageFromUrlException, StickerImageWriteException {
+        InputStream inputStream = StreamReader.recuperaImagemDaUrl(conteudo);
+        geradora.cria(inputStream, conteudo.titulo() + ".png", atribuiAvaliacao(conteudo));
+        System.out.println(conteudo + "\n");
     }
 
-    private static AvaliacaoEnum atribuiAvaliacao(DadosObrigatorios dadosObrigatorios) {
-        if (dadosObrigatorios instanceof ConteudoIMDB conteudoIMDB) {
+    private static AvaliacaoEnum atribuiAvaliacao(Conteudo conteudo) {
+        if (conteudo instanceof ConteudoIMDB conteudoIMDB) {
             return AvaliacaoEnum.getByRating(conteudoIMDB.imDbRating());
         } else
             return AvaliacaoEnum.BRABO;

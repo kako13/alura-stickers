@@ -1,10 +1,10 @@
 package com.alura.stikers.domain.extrator;
 
-import com.alura.stikers.domain.model.DadosObrigatorios;
+import com.alura.stikers.domain.model.Conteudo;
 
 import java.util.List;
 
 public interface ExtratorDeConteudo {
 
-    List<DadosObrigatorios> extraiDados(String json);
+    List<Conteudo> extraiDados(String json);
 }
